@@ -3,9 +3,9 @@ from data.data_util import set_seed
 import numpy as np
 from link_predict.meta_manager import MetaOptLinkPredictorManager
 from hgnn.configs import register_hgnn_args
-from final_archs.hyper_opt import search_hyper
+from hyper_opt import search_hyper
 import torch
-from final_archs.general_manager import GeneralManagerLP
+from general_manager import GeneralManagerLP
 from nas.search_space import SearchSpace
 
 best_config = {}

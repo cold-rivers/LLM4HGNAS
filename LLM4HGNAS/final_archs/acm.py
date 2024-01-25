@@ -4,13 +4,13 @@ import time
 import os
 import psutil
 
-from final_archs.general_manager import GeneralManagerNC
+from general_manager import GeneralManagerNC
 from data.data_util import set_seed
 import torch
 import numpy as np
 from hgnn.meta_manager import AggrManagerSK
 from hgnn.configs import register_hgnn_args
-from final_archs.hyper_opt import search_hyper
+from hyper_opt import search_hyper
 from collections import OrderedDict
 from nas.search_space import SearchSpace
 

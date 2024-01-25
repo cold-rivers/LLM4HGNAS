@@ -3,7 +3,6 @@ from hgnn.configs import register_hgnn_args
 from hgnn.meta_manager import AggrManagerSK
 from hgnn.utils import set_seed
 from nas.search_space import SearchSpace
-from benchmark.random_build_bench import HGNNRecord
 import argparse
 import heapq
 import json
@@ -14,8 +13,7 @@ import sys
 from prompt import dblp_prompt,imdb_prompt,acm_prompt
 url = "https://api.openai.com/v1/chat/completions"
 
-system_content='''You are a neural network architecture search AI, and you need to provide the architecture that users need and think about how to obtain a better performing architecture based on the architecture performance feedback from users. You need to gradually solve the problem. Please note to respond in the format specified by the user.Do not generate the architectures provided in the past'''#这里放入系统级提示
-performance_history=[]
+system_content='''You are a neural network architecture search AI, and you need to provide the architecture that users need and think about how to obtain a better performing architecture based on the architecture performance feedback from users. You need to gradually solve the problem. Please note to respond in the format specified by the user.Do not generate the architectures provided in the past'''
 
 
 def experiments_prompt(code_list, value_list):
@@ -72,18 +70,16 @@ def gpt_hgnas():
                             print(architecture)
                         try:    
                             code = eval(architecture)
-                            record = HGNNRecord()
-                            record.code = code
                             if len(code) != code_len or max(code)>=5:continue
                             # for i in range(15):
                             #     if i == 7 or i == 11: continue
                             #     if code[i]>1:code[i]=1
                             #if code in code_list: continue
-                            record.desc = search_space.decode(code)  
+                            desc = search_space.decode(code)  
                         # run and calculate time
                             set_seed(1)
                             start_time = time.time()
-                            val_score, test_score = gnn_manager_obj.evaluate(record.desc)
+                            val_score, test_score = gnn_manager_obj.evaluate(desc)
                             end_time = time.time()
                             code_list.append(code)
                             val_list.append(val_score)
@@ -94,9 +90,9 @@ def gpt_hgnas():
             except:
                 continue
         except:
-            with open(f"'{dataset}'_message.json", 'w') as f:
+            with open(f"{dataset}_message.json", 'w') as f:
                 json.dump(messages_history, f)
-            with open(f"'{dataset}'_performance.json", 'w') as f:
+            with open(f"{dataset}_performance.json", 'w') as f:
                 json.dump(performance_history ,f)
             continue
         sorted_performance = sorted(performance_history, key=lambda x: x['val_score'], reverse=True)
@@ -128,9 +124,9 @@ def gpt_hgnas():
         print(messages)
         messages_history.append(messages)
     messages_history.append({"llm_time":llm_time})
-    with open(f"'{dataset}'_message.json", 'w') as f:
+    with open(f"{dataset}_message.json", 'w') as f:
          json.dump(messages_history, f)
-    with open(f"'{dataset}'_performance.json", 'w') as f:
+    with open(f"{dataset}_performance.json", 'w') as f:
         json.dump(performance_history ,f)
 
 

@@ -1,7 +1,7 @@
 import torch.nn.functional as F
 
 from data.data_util import *
-from final_archs.tools import evaluate_results_nc
+from tools import evaluate_results_nc
 from hgnn.meta_manager import AggrManager
 from link_predict.meta_manager import MetaOptLinkPredictorManager
 

@@ -3,7 +3,6 @@ from hgnn.configs import register_hgnn_args
 from hgnn.meta_manager import AggrManagerSK
 from hgnn.utils import set_seed
 from nas.search_space import SearchSpace
-from benchmark.random_build_bench import HGNNRecord
 import argparse
 import sys
 import heapq
@@ -15,7 +14,7 @@ from prompt import douban_prompt,movielens_prompt,yelp_prompt,amazon_prompt
 import torch
 url = "https://api.openai.com/v1/chat/completions"
 
-system_content='''You are a neural network architecture search AI, and you need to provide the architecture that users need and think about how to obtain a better performing architecture based on the architecture performance feedback from users. You need to gradually solve the problem. Please note to respond in the format specified by the user.Do not generate the architectures provided in the past'''#这里放入系统级提示
+system_content='''You are a neural network architecture search AI, and you need to provide the architecture that users need and think about how to obtain a better performing architecture based on the architecture performance feedback from users. You need to gradually solve the problem. Please note to respond in the format specified by the user.Do not generate the architectures provided in the past'''
 performance_history=[]
 
 
@@ -91,17 +90,15 @@ def gpt_hgnas():
                             #         if ori_code[j][k]>1:ori_code[j][k]=1
                             code = flatten_list(ori_code)
                             print(code)
-                            record = HGNNRecord()
-                            record.code = code
                             if len(code) != code_len or max(code)>=5:
                                 print("error arch")
                                 continue
                             print(code)
                             if code not in code_list: 
-                                record.desc = search_space.decode(code)  
+                                desc = search_space.decode(code)  
                                 set_seed(1)
                                 start_time = time.time()
-                                val_score, test_score = gnn_manager_obj.evaluate(record.desc)
+                                val_score, test_score = gnn_manager_obj.evaluate(desc)
                                 end_time = time.time()
                                 print("val_score:", val_score, "test_score:", test_score)
                                 time_cost = end_time - start_time
@@ -121,9 +118,9 @@ def gpt_hgnas():
                 continue
         except Exception as e:
             print(e)
-            with open(f"'{dataset}'_message.json", 'w') as f:
+            with open(f"{dataset}_message.json", 'w') as f:
                 json.dump(messages_history, f)
-            with open(f"'{dataset}'_performance.json", 'w') as f:
+            with open(f"{dataset}_performance.json", 'w') as f:
                 json.dump(performance_history ,f)
             continue
         sorted_performance = sorted(performance_history, key=lambda x: x['val_score'], reverse=True)
@@ -131,7 +128,7 @@ def gpt_hgnas():
             prompt_last = '''In the previous round of experiments, the architectures you provided me and their corresponding performance are as follows:\n{}''' \
                 .format(''.join(
                 ['arch {} accuracy {:.4f} .\n'.format(item['code'], item['val_score']) for item in performance_history[-30:]]))
-            prompt_last += "search strategy：you should look for architectures that have not been explored before."
+            prompt_last += "search strategy:you should look for architectures that have not been explored before."
             prompt_last += "please use search strategy to design ten new different architectures and try to get better architectures."
         else:
             top = sorted_performance[:20]
@@ -144,7 +141,7 @@ def gpt_hgnas():
             prompt_last += "Top architectures by validation accuracy:\n"
             prompt_last += ''.join(['arch {} accuracy {:.4f} .\n'.format(item['code'], item['val_score']) for item in top])
 
-            prompt_last += 'search strategy：Now that you have accrued the accuracy of some architectures, Analyze how to get better architectures based on the well-performing architectures. Please give the analysis results and sampling basis and design ten new architectures based on your analysis and search strategy'
+            prompt_last += 'search strategy:Now that you have accrued the accuracy of some architectures, Analyze how to get better architectures based on the well-performing architectures. Please give the analysis results and sampling basis and design ten new architectures based on your analysis and search strategy'
         messages = [
         {"role": "system", "content": system_content},
         {"role": "user", "content": main_prompt + prompt_last}]
@@ -152,9 +149,9 @@ def gpt_hgnas():
         print(messages)
         messages_history.append(messages)
     performance_history.append({"llm_time":llm_time})
-    with open(f"'{dataset}'_message.json", 'w') as f:
+    with open(f"{dataset}_message.json", 'w') as f:
          json.dump(messages_history, f)
-    with open(f"'{dataset}'_performance.json", 'w') as f:
+    with open(f"{dataset}_performance.json", 'w') as f:
         json.dump(performance_history ,f)
 
 
