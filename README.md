@@ -24,7 +24,7 @@ headers = {
 cd LLM4HGNAS
 # node classification
 python nc_gpt.py --dataset ACM
-# recommendation
+# link prediction
 python lp_gpt.py --dataset Amazon
 ```
 response of GPT
