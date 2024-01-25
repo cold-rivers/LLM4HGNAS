@@ -1,11 +1,18 @@
 # Heterogeneous Graph Neural Architecture Search with Large Language Models
 code for https://arxiv.org/abs/2312.08680
+
+![image](https://github.com/cold-rivers/LLM4HGNAS/assets/73817096/35e03da7-2774-4c7d-b2fa-4eacdf983a19)
+
+
 ## Installation
 ```
 git clone https://github.com/cold-rivers/LLM4HGNAS.git
 cd LLM4HGNAS
 pip install -r requirements.txt
 ```
+
+
+
 
 ## Usage
 
