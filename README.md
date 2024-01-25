@@ -1,4 +1,4 @@
-# Heterogeneous Graph Neural Architecture Search with GPT-4
+# Heterogeneous Graph Neural Architecture Search with Large Language Models
 code for https://arxiv.org/abs/2312.08680
 ## Installation
 ```
