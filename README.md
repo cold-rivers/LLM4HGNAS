@@ -1,4 +1,4 @@
-# Heterogeneous Graph Neural Architecture Search with Large Language Models
+# Heterogeneous Graph Neural Architecture Search with GPT-4
 code for https://arxiv.org/abs/2312.08680
 
 ![image](https://github.com/cold-rivers/LLM4HGNAS/assets/73817096/35e03da7-2774-4c7d-b2fa-4eacdf983a19)
